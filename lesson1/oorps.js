@@ -3,6 +3,8 @@ const readline = require('readline-sync');
 function createPlayer() {
   return {
     move: null,
+    //Add score property to generic player object
+    score: 0,
   };
 }
 
@@ -61,12 +63,28 @@ const RPSGame = {
         (humanMove === 'paper' && computerMove === 'rock') ||
         (humanMove === 'scissors' && computerMove === 'paper')) {
       console.log('You win!');
+      this.human.score += 1;
     } else if ((humanMove === 'rock' && computerMove === 'paper') ||
                (humanMove === 'paper' && computerMove === 'scissors') ||
                (humanMove === 'scissors' && computerMove === 'rock')) {
       console.log('Computer wins!');
+      this.computer.score += 1;
     } else {
       console.log("It's a tie");
+    }
+    console.log(`The current score: You - ${this.human.score} and Computer - ${this.computer.score}`);
+  },
+
+  //New method to check if either player has reached 5 points
+  checkForGrandWinner() {
+    if (this.human.score === 5) {
+      console.log('Congratulations! You have beaten the computer 5 times! You are the GRAND WINNER!');
+      this.human.score = 0;
+      this.computer.score = 0;
+    } else if (this.computer.score === 5) {
+      console.log('The computer has beaten you 5 times! The computer is the GRAND WINNER!');
+      this.human.score = 0;
+      this.computer.score = 0;
     }
   },
 
@@ -86,6 +104,7 @@ const RPSGame = {
       this.human.choose();
       this.computer.choose();
       this.displayWinner();
+      this.checkForGrandWinner();
       if (!this.playAgain()) break;
     }
     this.displayGoodbyeMessage();

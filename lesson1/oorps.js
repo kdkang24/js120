@@ -73,6 +73,8 @@ const RPSGame = {
       //Sort loss rates object to get highest loss rate move at index 0
       lossRates = Object.entries(lossRates).sort((a, b) => b[1] - a[1]);
 
+      //Find index of highest loss rate move and remove that move
+      //This will reduce the probability of it being selected by the computer
       let biggestLoser = choices.indexOf(lossRates[0][0]);
       choices.splice(biggestLoser, 1);
       this.computer.choices = this.computer.choices.concat(choices);

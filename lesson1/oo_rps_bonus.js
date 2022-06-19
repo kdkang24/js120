@@ -37,13 +37,22 @@ function createHuman() {
       let choice;
 
       while (true) {
-        console.log('Please choose Rock, Paper, or Scissors:');
+        console.log('Please choose Rock (r), Paper (p), or Scissors (s):');
         choice = readline.question();
-        if (['rock', 'paper', 'scissors'].includes(choice.toLowerCase())) break;
+        if (['rock', 'paper', 'scissors', 'r', 'p', 's'].includes(choice.toLowerCase())) break;
         console.log('Sorry, invalid choice.');
       }
 
-      this.move = choice;
+      if (choice.toLowerCase() === 'r') {
+        this.move = 'rock';
+      } else if (choice.toLowerCase() === 'p') {
+        this.move = 'paper';
+      } else if (choice.toLowerCase() === 's') {
+        this.move = 'scissors';
+      } else {
+        this.move = choice;
+      }
+      console.clear();
     },
   };
 
@@ -80,7 +89,6 @@ const RPSGame = {
       choices.splice(biggestLoser, 1);
       this.computer.choices = this.computer.choices.concat(choices);
     }
-    console.log(this.computer.choices);
   },
 
   calculateLossRates() {

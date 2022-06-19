@@ -1,0 +1,22 @@
+this refers to the current execution context while the method is running
+
+For function invocations, the implicit function execution context is the global object
+
+For method invocations, the implicit function execution context is the calling object
+
+The function methods call and apply allow us to EXPLICITLY set the function execution context
+The bind method returns a new function that permanently binds a function to a context.
+
+Function invocations (e.g., parseInt(numberString)) rely upon implicit execution context that resolves to the global object. 
+Method invocations (e.g., array.forEach(processElement)) rely upon implicit context that resolves to the object that holds the method.
+
+Arrow functions are permanently bound to the execution context of the enclosing function invocation.
+When defined at the top level, the context of an arrow function is the global object.
+
+
+ENCAPSULATION
+The grouping together of related data and functions is what’s called encapsulation 
+and is one of the fundamental principles of object-oriented programming.
+
+CONSTRUCTORS
+When you call a function with new, its implicit context is the new object.

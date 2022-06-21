@@ -84,7 +84,6 @@ class Participant {
 class Player extends Participant {
   constructor() {
     super();
-    this.name = 'You';
     this.dollars = 5;
   }
 
@@ -92,16 +91,13 @@ class Player extends Participant {
     //Added console.clear() to Player's hit() for better interface
     console.clear();
     let newCard = deck.cards.shift();
-    console.log(`==> ${this.name} drew the ${Object.keys(newCard)[0]}!`);
+    console.log(`==> You drew the ${Object.keys(newCard)[0]}!`);
     this.hand.push(newCard);
   }
 
-  // stay() {
-  //   console.log(`You have chosen to stay. Your score is ${this.score()}. It is now the Dealer's turn.`);
-  // }
-
   showCards() {
-    console.log('Your cards are:');
+    console.log('Your cards:');
+    console.log("-------------------");
     this.hand.forEach(card => console.log(`- ${Object.keys(card)[0]}`));
     console.log(`==> The total of your cards is ${this.score()}.\n`);
   }
@@ -110,22 +106,20 @@ class Player extends Participant {
 class Dealer extends Participant {
   constructor() {
     super();
-    this.name = 'The Dealer';
+    this.name = "The Dealer";
   }
 
-  // stay() {
-  //   console.log("The Dealer stays at 17 or higher.");
-  // }
-
   showInitialCards() {
-    console.log("The Dealer's cards are:");
+    console.log("The Dealer's cards:");
+    console.log("-------------------")
     console.log(`- ${Object.keys(this.hand[0])[0]}`);
     console.log('- *** HIDDEN CARD ***');
     console.log('');
   }
 
   reveal() {
-    console.log("The Dealer's cards are:");
+    console.log("The Dealer's cards:");
+    console.log("-------------------");
     this.hand.forEach(card => console.log(`- ${Object.keys(card)[0]}`));
     console.log(`==> The total of the Dealer's cards is ${this.score()}.\n`);
   }
@@ -143,6 +137,7 @@ class TwentyOneGame {
   start() {
     while (true) {
       this.displayWelcomeMessage();
+      this.displayPlayerFunds();
       this.dealCards();
       this.showCards();
       this.playerTurn();
@@ -152,7 +147,7 @@ class TwentyOneGame {
       this.determineWinner();
       this.displayResult();
       //Loop to play again
-      if (this.playAgain()) {
+      if (this.playAgain() || this.checkPlayerFunds()) {
         break;
       }
     }
@@ -193,6 +188,7 @@ class TwentyOneGame {
       if (this.player.isBusted()) {
         console.log(`==> You went over 21. You've busted out!`);
         this.winner = this.dealer;
+        this.player.dollars -= 1;
         break;
       }
       playerAnswer = readline.question(decision);
@@ -201,8 +197,6 @@ class TwentyOneGame {
 
   dealerTurn() {
     console.clear();
-    // // Player's stay() method called for score display only
-    // this.player.stay();
     this.displayDealerTurnMessage();
     this.dealer.reveal();
     while (this.dealer.score() < 17) {
@@ -212,20 +206,35 @@ class TwentyOneGame {
     if (this.dealer.isBusted()) {
       console.log(`==> The Dealer went over 21. He's busted out!`);
       this.winner = this.player;
+      this.player.dollars += 1;
     }
   }
 
+  checkPlayerFunds() {
+    const RICH = 6;
+    const BROKE = 0;
+    if (this.player.dollars === BROKE) {
+      console.log(`You're broke! You can't play anymore!`);
+      return true;
+    } else if (this.player.dollars === RICH) {
+      console.log(`You're rich! Quit while you're ahead!`);
+      return true;
+    } else return false;
+  }
+
+
   determineWinner() {
     //This will only execute if neither player nor dealer has busted
-    
     if (this.winner === null) {
       console.log(`Your score is ${this.player.score()}. The Dealer's score is ${this.dealer.score()}.`);
       if (this.player.score() > this.dealer.score()) {
         this.winner = this.player;
+        this.player.dollars += 1;
       } else if (this.dealer.score() > this.player.score()) {
         this.winner = this.dealer;
+        this.player.dollars -= 1;
       } else {
-        this.winner = "It's a tie";
+        this.winner = "It's a tie.";
       }
     }
   }
@@ -241,6 +250,13 @@ class TwentyOneGame {
       //In case of tie
       console.log(this.winner);
     }
+  }
+
+  displayPlayerFunds() {
+    console.log('');
+    console.log(`=$$$= You have ${this.player.dollars} dollars in your wallet. =$$$=`);
+    console.log(`- Every round requires a $1 bet!`);
+    console.log('');
   }
 
   displayWelcomeMessage() {

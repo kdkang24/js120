@@ -127,10 +127,10 @@ class Dealer extends Participant {
 
 
 class TwentyOneGame {
-  constructor(deck, player, dealer) {
-    this.deck = deck;
-    this.player = player;
-    this.dealer = dealer;
+  constructor() {
+    this.deck = new Deck();
+    this.player = new Player();
+    this.dealer = new Dealer();
     this.winner = null;
   }
 
@@ -211,7 +211,7 @@ class TwentyOneGame {
   }
 
   checkPlayerFunds() {
-    const RICH = 6;
+    const RICH = 10;
     const BROKE = 0;
     if (this.player.dollars === BROKE) {
       console.log(`You're broke! You can't play anymore!`);
@@ -289,5 +289,5 @@ class TwentyOneGame {
   }
 }
 
-let game = new TwentyOneGame(new Deck(), new Player(), new Dealer());
+let game = new TwentyOneGame();
 game.start();

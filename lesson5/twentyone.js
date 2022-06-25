@@ -1,5 +1,7 @@
 //readline-sync module for user input
 const readline = require("readline-sync");
+const WINNING_SCORE = 21;
+const DEALER_STAYS_AT_SCORE = 17;
 
 class Deck {
   constructor() {
@@ -68,7 +70,7 @@ class Participant {
     });
     //Modify for Aces
     while (aces > 0) {
-      if (total > 21) {
+      if (total > WINNING_SCORE) {
         total -= 10;
       }
       aces -= 1;
@@ -77,7 +79,7 @@ class Participant {
   }
 
   isBusted() {
-    return this.score() > 21;
+    return this.score() > WINNING_SCORE;
   }
 }
 
@@ -111,7 +113,7 @@ class Dealer extends Participant {
 
   showInitialCards() {
     console.log("The Dealer's cards:");
-    console.log("-------------------")
+    console.log("-------------------");
     console.log(`- ${Object.keys(this.hand[0])[0]}`);
     console.log('- *** HIDDEN CARD ***');
     console.log('');
@@ -138,7 +140,7 @@ class TwentyOneGame {
     while (true) {
       this.displayWelcomeMessage();
       this.displayPlayerFunds();
-      this.dealCards();
+      this.resetDeckAndDealCards();
       this.showCards();
       this.playerTurn();
       if (this.winner !== this.dealer) {
@@ -154,7 +156,7 @@ class TwentyOneGame {
     this.displayGoodbyeMessage();
   }
 
-  dealCards() {
+  resetDeckAndDealCards() {
     //Create fresh deck and reset winner
     this.deck.createFreshDeck();
     this.deck.shuffle();
@@ -181,12 +183,12 @@ class TwentyOneGame {
       playerAnswer = readline.question(decision);
     }
 
-    while (playerAnswer[0] !== "s") {
+    while (playerAnswer[0].toLowerCase() !== "s") {
       this.player.hit(this.deck);
       this.showCards();
 
       if (this.player.isBusted()) {
-        console.log(`==> You went over 21. You've busted out!`);
+        console.log(`==> You went over ${WINNING_SCORE}. You've busted out!`);
         this.winner = this.dealer;
         this.player.dollars -= 1;
         break;
@@ -199,12 +201,12 @@ class TwentyOneGame {
     console.clear();
     this.displayDealerTurnMessage();
     this.dealer.reveal();
-    while (this.dealer.score() < 17) {
+    while (this.dealer.score() < DEALER_STAYS_AT_SCORE) {
       this.dealer.hit(this.deck);
       this.dealer.reveal();
     }
     if (this.dealer.isBusted()) {
-      console.log(`==> The Dealer went over 21. He's busted out!`);
+      console.log(`==> The Dealer went over ${WINNING_SCORE}. He's busted out!`);
       this.winner = this.player;
       this.player.dollars += 1;
     }
@@ -262,13 +264,13 @@ class TwentyOneGame {
   displayWelcomeMessage() {
     console.clear();
     console.log('==========================================');
-    console.log('*** Welcome to the game of Twenty One! ***');
+    console.log(`************* Welcome to ${WINNING_SCORE}! *************`);
     console.log('==========================================');
   }
 
   displayGoodbyeMessage() {
     console.log('======================================');
-    console.log('*** Thanks for playing Twenty One! ***');
+    console.log(`******* Thanks for playing ${WINNING_SCORE}! *******`);
     console.log('======================================');
   }
 
@@ -281,7 +283,7 @@ class TwentyOneGame {
   playAgain() {
     let answer = readline.question('Do you want to play again? [y/n] ').toLowerCase();
     while (!['y', 'yes', 'n', 'no'].includes(answer)) {
-      prompt('Please enter "y" or "n".');
+      console.log('Please enter "y" or "n".');
       answer = readline.question().toLowerCase();
     }
 

@@ -1,7 +1,5 @@
 //readline-sync module for user input
 const readline = require("readline-sync");
-const WINNING_SCORE = 21;
-const DEALER_STAYS_AT_SCORE = 17;
 
 class Deck {
   constructor() {
@@ -48,6 +46,7 @@ class Participant {
   constructor() {
     this.hand = [];
     this.winCount = 0;
+    this.WINNING_SCORE = 21;
   }
 
   hit(deck) {
@@ -70,7 +69,7 @@ class Participant {
     });
     //Modify for Aces
     while (aces > 0) {
-      if (total > WINNING_SCORE) {
+      if (total > this.WINNING_SCORE) {
         total -= 10;
       }
       aces -= 1;
@@ -79,22 +78,25 @@ class Participant {
   }
 
   isBusted() {
-    return this.score() > WINNING_SCORE;
+    return this.score() > this.WINNING_SCORE;
   }
 }
 
 class Player extends Participant {
   constructor() {
     super();
+    this.name = "You";
     this.dollars = 5;
   }
 
   hit(deck) {
     //Added console.clear() to Player's hit() for better interface
     console.clear();
-    let newCard = deck.cards.shift();
-    console.log(`==> You drew the ${Object.keys(newCard)[0]}!`);
-    this.hand.push(newCard);
+    super.hit(deck);
+    // replace the lines below with super.hit(deck);
+    // let newCard = deck.cards.shift();
+    // console.log(`==> You drew the ${Object.keys(newCard)[0]}!`);
+    // this.hand.push(newCard);
   }
 
   showCards() {
@@ -127,13 +129,14 @@ class Dealer extends Participant {
   }
 }
 
-
 class TwentyOneGame {
   constructor() {
     this.deck = new Deck();
     this.player = new Player();
     this.dealer = new Dealer();
     this.winner = null;
+    this.WINNING_SCORE = 21;
+    this.DEALER_STAYS_AT_SCORE = 17;
   }
 
   start() {
@@ -188,7 +191,7 @@ class TwentyOneGame {
       this.showCards();
 
       if (this.player.isBusted()) {
-        console.log(`==> You went over ${WINNING_SCORE}. You've busted out!`);
+        console.log(`==> You went over ${this.WINNING_SCORE}. You've busted out!`);
         this.winner = this.dealer;
         this.player.dollars -= 1;
         break;
@@ -201,12 +204,12 @@ class TwentyOneGame {
     console.clear();
     this.displayDealerTurnMessage();
     this.dealer.reveal();
-    while (this.dealer.score() < DEALER_STAYS_AT_SCORE) {
+    while (this.dealer.score() < this.DEALER_STAYS_AT_SCORE) {
       this.dealer.hit(this.deck);
       this.dealer.reveal();
     }
     if (this.dealer.isBusted()) {
-      console.log(`==> The Dealer went over ${WINNING_SCORE}. He's busted out!`);
+      console.log(`==> The Dealer went over ${this.WINNING_SCORE}. He's busted out!`);
       this.winner = this.player;
       this.player.dollars += 1;
     }
@@ -264,13 +267,13 @@ class TwentyOneGame {
   displayWelcomeMessage() {
     console.clear();
     console.log('==========================================');
-    console.log(`************* Welcome to ${WINNING_SCORE}! *************`);
+    console.log(`************* Welcome to ${this.WINNING_SCORE}! *************`);
     console.log('==========================================');
   }
 
   displayGoodbyeMessage() {
     console.log('======================================');
-    console.log(`******* Thanks for playing ${WINNING_SCORE}! *******`);
+    console.log(`******* Thanks for playing ${this.WINNING_SCORE}! *******`);
     console.log('======================================');
   }
 
@@ -290,6 +293,7 @@ class TwentyOneGame {
     return (answer[0] === 'n');
   }
 }
+
 
 let game = new TwentyOneGame();
 game.start();
